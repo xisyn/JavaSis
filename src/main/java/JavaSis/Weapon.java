@@ -1,8 +1,15 @@
 package JavaSis;
 
-public class Weapon {
+public abstract class Weapon {
 
-    void hit(Target target) {
+    protected int physicalDamage;
+    protected int fireDamage;
+    protected int iceDamage;
 
+    protected abstract void attackLevel();
+
+    public void hit(Target target) {
+        attackLevel();
+        target.attack(physicalDamage, fireDamage, iceDamage);
     }
 }
