@@ -1,7 +1,6 @@
 package JavaSis;
 
 public class Target {
-
     private int physicalDamage;
     private int fireDamage;
     private int iceDamage;
@@ -18,9 +17,19 @@ public class Target {
         return iceDamage;
     }
 
-    public void attack(int physicalAttack, int fireAttack, int iceAttack) {
-        physicalDamage += physicalAttack;
-        fireDamage += fireAttack;
-        iceDamage += iceAttack;
+    public void attack(String weaponType, String weaponEffect) {
+        if (weaponType.equals("melee")) {
+            Sword sword = new Sword(weaponEffect);
+            getDamage(sword);
+        } else if (weaponType.equals("range")) {
+            Bow bow = new Bow(weaponEffect);
+            getDamage(bow);
+        }
+    }
+
+    private void getDamage(Weapon w) {
+        physicalDamage += w.getDamage();
+        fireDamage += w.getFire();
+        iceDamage += w.getIce();
     }
 }

@@ -7,51 +7,46 @@ import static org.junit.Assert.assertEquals;
 public class WeaponTest {
     @Test
     public void testSwordPhysicalDamage() {
-
         Target t = new Target();
-        Weapon sword = new Sword();
+        Weapon weapon = new Weapon("melee", "");
 
-        sword.hit(t);
+        weapon.hit(t);
 
         assertEquals(100, t.getPhysicalDamage());
-
     }
 
     @Test
     public void testBowFireDamage() {
-
         Target t = new Target();
-        Weapon bow = new Bow();
+        Weapon weapon = new Weapon("range", "fire");
 
-        bow.hit(t);
+        weapon.hit(t);
 
-        assertEquals(120, t.getFireDamage());
+        assertEquals(90, t.getFireDamage());
     }
 
     @Test
     public void testSwordIceDamage() {
-
         Target t = new Target();
-        Weapon sword = new Sword();
+        Weapon weapon = new Weapon("melee", "ice");
 
-        sword.hit(t);
+        weapon.hit(t);
 
-        assertEquals(140, t.getIceDamage());
+        assertEquals(120, t.getIceDamage());
     }
 
     @Test
     public void testDoubleDamage() {
-
         Target t = new Target();
-        Weapon sword = new Sword();
-        Weapon bow = new Bow();
+        Weapon sword = new Weapon("melee", "fire");
+        Weapon bow = new Weapon("range", "ice");
 
         sword.hit(t);
         bow.hit(t);
 
         assertEquals(150, t.getPhysicalDamage());
-        assertEquals(270, t.getFireDamage());
-        assertEquals(250, t.getIceDamage());
+        assertEquals(150, t.getFireDamage());
+        assertEquals(70, t.getIceDamage());
 
     }
 }
