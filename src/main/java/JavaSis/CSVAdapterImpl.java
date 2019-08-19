@@ -22,7 +22,8 @@ public class CSVAdapterImpl<T> extends CSVAdapter<Author> {
         }
     }
 
-    private Author parseLine(String line) {
+    @Override
+    public Author parseLine(String line) {
         Pattern pattern = Pattern.compile(", ");
         String[] element = pattern.split(line);
         String name = element[0];

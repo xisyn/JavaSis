@@ -24,4 +24,6 @@ public abstract class CSVAdapter<T> {
 
     public abstract void write(FileWriter writer, String stringSeparator, int index);
 
+    public abstract T parseLine(String line);
+
 }
