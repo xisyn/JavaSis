@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class CSVAdapterImpl<T> extends CSVAdapter<Author> {
 
@@ -22,12 +23,11 @@ public class CSVAdapterImpl<T> extends CSVAdapter<Author> {
     }
 
     private Author parseLine(String line) {
-        try (Scanner scanner = new Scanner(line)) {
-            scanner.useDelimiter(", ");
-            String name = scanner.next();
-            String place = scanner.next();
-            return new Author(name, place);
-        }
+        Pattern pattern = Pattern.compile(", ");
+        String[] element = pattern.split(line);
+        String name = element[0];
+        String place = element[1];
+        return new Author(name, place);
     }
 
     @Override
