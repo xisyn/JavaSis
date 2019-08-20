@@ -3,7 +3,7 @@ package JavaSis;
 import java.io.FileWriter;
 import java.util.List;
 
-public abstract class CSVAdapter<T> {
+public abstract class CSVAdapter<T extends Writeable> {
     protected List<T> list;
     protected T t;
     protected FileWriter writer;
@@ -18,12 +18,12 @@ public abstract class CSVAdapter<T> {
     public int append(T newT) {
         list.add(newT);
         int addedRowIndex = list.size() - 1;
-        write(writer, stringSeparator, addedRowIndex);
+        t.write(writer, stringSeparator, addedRowIndex, list);
         return addedRowIndex;
     }
 
-    public abstract void write(FileWriter writer, String stringSeparator, int index);
+    /*public abstract void write(FileWriter writer, String stringSeparator, int index);
 
-    public abstract T parseLine(String line);
+    public abstract T parseLine(String line);*/
 
 }
