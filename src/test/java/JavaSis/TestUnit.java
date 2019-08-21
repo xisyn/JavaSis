@@ -33,7 +33,7 @@ public class TestUnit {
             assertEquals("Некоторый Автор", authorNewOpened.getName());
             assertEquals("Некоторый Город", authorNewOpened.getBirthPlace());
 
-        } catch (IOException | IllegalAccessException | InstantiationException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

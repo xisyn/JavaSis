@@ -7,11 +7,15 @@ import java.util.Scanner;
 
 public class CSVAdapterImpl<T extends Writeable> extends CSVAdapter<T> {
 
-    public CSVAdapterImpl(Class<T> authorClass, FileReader fileReader, FileWriter fileWriter) throws IllegalAccessException, InstantiationException {
+    public CSVAdapterImpl(Class<T> authorClass, FileReader fileReader, FileWriter fileWriter) {
         super.list = new ArrayList<>();
         super.writer = fileWriter;
         super.stringSeparator = System.getProperty("line.separator");
-        super.t = authorClass.newInstance();
+        try {
+            super.t = authorClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
         try (Scanner scan = new Scanner(fileReader)) {
             scan.useDelimiter(stringSeparator);
