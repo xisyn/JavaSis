@@ -3,6 +3,7 @@ import entity.Route;
 import entity.RouteType;
 import entity.Transport;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,6 +12,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TestPathFinder {
@@ -23,6 +25,19 @@ public class TestPathFinder {
 
     private List<Transport> getAvailableTransport() {
         return Arrays.asList(GAZelle, Plane, Tanker, Train, SemiTrailerTruck);
+    }
+
+    @Test
+    public void testTransport() {
+        List<Transport> allTransports = getAvailableTransport();
+        DeliveryTask deliveryTask = new DeliveryTask("Test task",
+                Arrays.asList(
+                new Route(RouteType.Air, 2000),
+                new Route(RouteType.Sea, 2500)),
+                100);
+        PathFinder pathFinder = new PathFinder();
+        List<Transport> filteredTransport = pathFinder.getFilteredTransport(deliveryTask, allTransports);
+        System.out.println(filteredTransport.stream().map(Transport::getName).collect(Collectors.toList()));
     }
 
     @ParameterizedTest
@@ -104,5 +119,4 @@ public class TestPathFinder {
             );
         }
     }
-
 }
