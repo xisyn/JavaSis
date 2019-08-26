@@ -3,51 +3,74 @@ import entity.Route;
 import entity.RouteType;
 import entity.Transport;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Map.Entry.comparingByValue;
+import static java.util.stream.Collectors.toMap;
 
 public class PathFinder {
 
     public Transport getOptimalTransport(DeliveryTask deliveryTask, List<Transport> transports) {
-        transports.stream()
-                //.map(Transport::getType)
-                .filter(transport -> getRouteTypes(deliveryTask).contains(transport.getType()))
-                .collect(Collectors.toList());
-        return transports.get(0);
-        //deliveryTask.getRoutes().stream().map(Route::getType).collect(Collectors.toList()).contains() //получился список с типами маршрутов из таски
-        //проверить что тип полученного транспорта есть в этом списке
-
+        List<Transport> filteredTransports = getFilteredTransports(deliveryTask, transports);
+        Map<Transport, Double> transportWithPrice = getSortedTransportsWithPrices(deliveryTask, filteredTransports);
+        Optional<Transport> cheapest = transportWithPrice.keySet().stream().findFirst();
+        return cheapest.orElseThrow(() -> new RuntimeException("Нет подходящего транспорта"));
     }
 
-    public List<Transport> getFilteredTransport (DeliveryTask deliveryTask, List<Transport> transports) {
+    /**
+     * Получить map транспорта с ценами, отсортированный по увеличению цены
+     */
+    private Map<Transport, Double> getSortedTransportsWithPrices(DeliveryTask deliveryTask, List<Transport> transports) {
+        List<Double> prices = transports
+                .stream()
+                .map(transport -> getTransportPrice(deliveryTask, transport))
+                .collect(Collectors.toList());
+
+        Map<Transport, Double> transportWithPrice = new HashMap<>();
+        for (int i=0; i < transports.size(); i++) {
+            transportWithPrice.put(transports.get(i), prices.get(i));
+        }
+
+        return transportWithPrice
+                .entrySet()
+                .stream()
+                .sorted(comparingByValue())
+                .collect(
+                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                                LinkedHashMap::new));
+    }
+
+    /**
+     * Отфильтровать транспорт по типу маршрута и объему груза из таски
+     */
+    private List<Transport> getFilteredTransports(DeliveryTask deliveryTask, List<Transport> transports) {
         return transports.stream()
-                //.map(Transport::getType)
                 .filter(transport -> getRouteTypes(deliveryTask).contains(transport.getType()))
+                .filter(transport -> transport.getVolume() >= deliveryTask.getVolume())
                 .collect(Collectors.toList());
     }
 
-
-    //получить список маршрутов из таски
-    public static List<RouteType> getRouteTypes(DeliveryTask task) {
+    /**
+     * Получить список маршрутов из таски
+     */
+    private List<RouteType> getRouteTypes(DeliveryTask task) {
         return task.getRoutes().stream()
                 .map(Route::getType)
                 .collect(Collectors.toList());
     }
 
-    public static void main(String[] args) {
-        List<String> test1 = new ArrayList<>();
-        test1.add("First");
-        test1.add("Second");
-
-        List<String> test2 = new ArrayList<>();
-        test2.add("Second");
-        test2.add("Third");
-
-        System.out.println(test2.stream()
-                //.filter(test -> test1.contains(test))
-                .filter(test1::contains)
-                .collect(Collectors.toList()));
+    /**
+     * Получить цену транспорта для маршрута
+     */
+    private double getTransportPrice(DeliveryTask task, Transport transport) {
+        double price = transport.getPrice();
+        double length = 0;
+        for (Route route : task.getRoutes()) {
+            if (route.getType().equals(transport.getType())) {
+                length = route.getLength();
+            }
+        }
+        return price * length;
     }
-
 }

@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TestPathFinder {
@@ -32,13 +31,15 @@ public class TestPathFinder {
         List<Transport> allTransports = getAvailableTransport();
         DeliveryTask deliveryTask = new DeliveryTask("Test task",
                 Arrays.asList(
-                new Route(RouteType.Air, 2000),
-                new Route(RouteType.Sea, 2500)),
-                100);
+                        new Route(RouteType.Air, 2000),
+                        new Route(RouteType.Road, 3000),
+                        new Route(RouteType.Sea, 2500)),
+                1);
         PathFinder pathFinder = new PathFinder();
-        List<Transport> filteredTransport = pathFinder.getFilteredTransport(deliveryTask, allTransports);
-        System.out.println(filteredTransport.stream().map(Transport::getName).collect(Collectors.toList()));
+        Transport optimal = pathFinder.getOptimalTransport(deliveryTask, allTransports);
+        System.out.println(optimal.getName());
     }
+
 
     @ParameterizedTest
     @ArgumentsSource(TestGetOptimalTransportArguments.class)
