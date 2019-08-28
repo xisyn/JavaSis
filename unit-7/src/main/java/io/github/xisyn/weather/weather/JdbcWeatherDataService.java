@@ -4,10 +4,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -21,12 +19,9 @@ public class JdbcWeatherDataService implements WeatherDataService {
 
     @Override
     public void save(String city, String temperature) {
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDate = dateFormat.format(date);
+        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
-        jdbcTemplate.update("insert into weathers (temperature) values (?)", String.join(" ", city, formattedDate, temperature));
+        jdbcTemplate.update("insert into weathers (temperature) values (?)", String.join(" ", city, currentDate, temperature));
     }
 
     @Override

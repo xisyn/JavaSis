@@ -1,6 +1,7 @@
 package io.github.xisyn.weather;
 
 import io.github.xisyn.weather.weather.WeatherRetriever;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class WeatherApplicationTests {
     public void weather() {
         String weather = weatherRetriever.getWeather("Красноярск").main.getTemp();
         System.out.println(weather);
+        Assert.assertNotNull(weather);
     }
 
 }
