@@ -12,8 +12,6 @@ public class ShellCommands {
     private final WeatherRetriever weatherService;
     private final JdbcWeatherDataService weatherDataService;
 
-    private String currentTemperature;
-
     public ShellCommands(WeatherRetriever weatherRetriever, JdbcWeatherDataService weatherDataService) {
         this.weatherService = weatherRetriever;
         this.weatherDataService = weatherDataService;
@@ -21,7 +19,7 @@ public class ShellCommands {
 
     @ShellMethod("Get city current weather temperature and save it")
     public String weatherTemp(String city) {
-        currentTemperature = weatherService.getWeather(city).main.getTemp();
+        String currentTemperature = weatherService.getWeather(city).main.getTemp();
         weatherDataService.save(city, currentTemperature);
         return currentTemperature;
     }
