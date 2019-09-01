@@ -3,12 +3,8 @@ import entity.Route;
 import entity.RouteType;
 import entity.Transport;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
@@ -17,15 +13,16 @@ public class PathFinder {
 
     public Transport getOptimalTransport(DeliveryTask deliveryTask, List<Transport> transports) {
         List<Transport> filteredTransports = getFilteredTransports(deliveryTask, transports);
-        Map<Transport, Double> transportWithPrice = getSortedTransportsWithPrices(deliveryTask, filteredTransports);
+        /*Map<Transport, Double> transportWithPrice = getSortedTransportsWithPrices(deliveryTask, filteredTransports);
         Optional<Transport> cheapest = transportWithPrice.keySet().stream().findFirst();
-        return cheapest.orElseThrow(() -> new RuntimeException("Нет подходящего транспорта"));
+        return optionalTransport.orElseThrow(() -> new RuntimeException("Нет подходящего транспорта"));*/
+        return getTransportsWithMinPrice(deliveryTask, filteredTransports);
     }
 
     /**
      * Получить map транспорта с ценами, отсортированный по увеличению цены
      */
-    private Map<Transport, Double> getSortedTransportsWithPrices(DeliveryTask deliveryTask, List<Transport> transports) {
+    /*private Map<Transport, Double> getSortedTransportsWithPrices(DeliveryTask deliveryTask, List<Transport> transports) {
         return IntStream.range(0, transports.size()).boxed()
                 .collect(Collectors.toMap(transports::get, transports.stream()
                         .map(transport -> getTransportPrice(deliveryTask, transport))
@@ -35,6 +32,28 @@ public class PathFinder {
                 .sorted(comparingByValue())
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                         LinkedHashMap::new));
+    }*/
+
+    private Map<Transport, Double> getSortedTransportsWithPrices(DeliveryTask deliveryTask, List<Transport> transports) {
+        return transports.stream()
+                .collect(toMap(t -> t,
+                        transport -> getTransportPrice(deliveryTask, transport)))
+                .entrySet()
+                .stream()
+                .sorted(comparingByValue())
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                        LinkedHashMap::new));
+    }
+
+    private Transport getTransportsWithMinPrice(DeliveryTask deliveryTask, List<Transport> transports) {
+        return transports.stream()
+                .collect(toMap(t -> t,
+                        transport -> getTransportPrice(deliveryTask, transport)))
+                .entrySet()
+                .stream()
+                .min(Comparator.comparingDouble(Map.Entry::getValue))
+                .orElseThrow(() -> new RuntimeException("Нет подходящего транспорта"))
+                .getKey();
     }
 
     /**

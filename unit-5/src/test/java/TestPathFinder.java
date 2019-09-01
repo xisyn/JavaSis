@@ -34,7 +34,7 @@ public class TestPathFinder {
                         new Route(RouteType.Air, 2000),
                         new Route(RouteType.Road, 3000),
                         new Route(RouteType.Sea, 2500)),
-                1);
+                200);
         PathFinder pathFinder = new PathFinder();
         Transport optimal = pathFinder.getOptimalTransport(deliveryTask, allTransports);
         System.out.println(optimal.getName());
