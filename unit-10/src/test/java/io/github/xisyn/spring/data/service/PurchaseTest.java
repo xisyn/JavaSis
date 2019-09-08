@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -90,13 +92,13 @@ public class PurchaseTest {
         Book bookTest2 = bookService.findByTitle("Какая-то");
         Customer customerTest2 = customerService.findByFullName("Missis Customer");
 
-        purchasedBookService.purchaseBook(bookTest1, customerTest1, 100);
-        purchasedBookService.purchaseBook(bookTest2, customerTest2, 50);
-        purchasedBookService.purchaseBook(bookTest2, customerTest1, 60);
+        purchasedBookService.purchaseBook(bookTest1, customerTest1, BigDecimal.valueOf(100));
+        purchasedBookService.purchaseBook(bookTest2, customerTest2, BigDecimal.valueOf(50));
+        purchasedBookService.purchaseBook(bookTest2, customerTest1, BigDecimal.valueOf(60));
 
-        assertEquals(100, purchasedBookService.bookAmountPurchases(bookTest1), 0);
-        assertEquals(110, purchasedBookService.bookAmountPurchases(bookTest2), 0);
-        assertEquals(160, purchasedBookService.customerAmountPurchases(customerTest1), 0);
-        assertEquals(50, purchasedBookService.customerAmountPurchases(customerTest2), 0);
+        assertEquals(0, BigDecimal.valueOf(100).compareTo(purchasedBookService.bookAmountPurchases(bookTest1)), 0);
+        assertEquals(0, BigDecimal.valueOf(110).compareTo(purchasedBookService.bookAmountPurchases(bookTest2)), 0);
+        assertEquals(0, BigDecimal.valueOf(160).compareTo(purchasedBookService.customerAmountPurchases(customerTest1)), 0);
+        assertEquals(0, BigDecimal.valueOf(50).compareTo(purchasedBookService.customerAmountPurchases(customerTest2)), 0);
     }
 }

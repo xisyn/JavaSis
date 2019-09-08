@@ -15,9 +15,9 @@ public class Customer {
     @Id
     private Long id;
 
-    @Column
+    @Column(name = "full_name")
     private String fullName;
 
-    @Column
+    @Column(name = "residence_address")
     private String residenceAddress;
 }

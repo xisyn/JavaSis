@@ -3,6 +3,7 @@ package io.github.xisyn.spring.data.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -21,5 +22,5 @@ public class PurchasedBook {
     private Book book;
 
     @Column
-    private Double cost;
+    private BigDecimal cost;
 }
