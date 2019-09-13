@@ -17,8 +17,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
-    public QuestionServiceImpl(QuestionRepository questionRepository,
-                               AnswerRepository answerRepository) {
+    public QuestionServiceImpl(QuestionRepository questionRepository, AnswerRepository answerRepository) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
     }
@@ -29,17 +28,9 @@ public class QuestionServiceImpl implements QuestionService {
         question.setName(dto.name);
         questionRepository.save(question);
 
-        for (AnswerItemDTO answerDTO : dto.answers) {
-            Answer answer = new Answer();
-            answer.setName(answerDTO.answerText);
-            answer.setCorrect(answerDTO.isCorrect);
-            answer.setQuestion(question);
+        saveAnswers(dto, question);
 
-            answerRepository.save(answer);
-        }
-
-        return new QuestionsItemDTO(question,
-                answerRepository.findByQuestion(question));
+        return new QuestionsItemDTO(question, answerRepository.findByQuestion(question));
     }
 
     @Override
@@ -49,16 +40,25 @@ public class QuestionServiceImpl implements QuestionService {
         question.setName(dto.name);
         questionRepository.save(question);
 
+        deleteAnswers(question);
+        saveAnswers(dto, question);
+
+        return new QuestionsItemDTO(question, answerRepository.findByQuestion(question));
+    }
+
+    private void saveAnswers(QuestionsItemDTO dto, Question question) {
         for (AnswerItemDTO answerDTO : dto.answers) {
             Answer answer = new Answer();
-            //answer.setId(Long.valueOf(answerDTO.id));
-
             answer.setName(answerDTO.answerText);
             answer.setCorrect(answerDTO.isCorrect);
             answer.setQuestion(question);
             answerRepository.save(answer);
         }
+    }
 
-        return new QuestionsItemDTO(question, answerRepository.findByQuestion(question));
+    private void deleteAnswers(Question question) {
+        for (Answer existedAnswer : answerRepository.findByQuestion(question)) {
+            answerRepository.delete(existedAnswer);
+        }
     }
 }
