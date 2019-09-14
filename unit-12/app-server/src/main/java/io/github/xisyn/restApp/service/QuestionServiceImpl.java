@@ -9,6 +9,8 @@ import io.github.xisyn.restApp.entity.Question;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -44,6 +46,17 @@ public class QuestionServiceImpl implements QuestionService {
         saveAnswers(dto, question);
 
         return new QuestionsItemDTO(question, answerRepository.findByQuestion(question));
+    }
+
+    @Override
+    public List<QuestionsItemDTO> getQuestions() {
+        List<QuestionsItemDTO> questionsItemDTOS = new ArrayList<>();
+        for (Question question : questionRepository.findAll()) {
+            List<Answer> answers = answerRepository.findByQuestion(question);
+            QuestionsItemDTO dto = new QuestionsItemDTO(question, answers);
+            questionsItemDTOS.add(dto);
+        }
+        return questionsItemDTOS;
     }
 
     private void saveAnswers(QuestionsItemDTO dto, Question question) {

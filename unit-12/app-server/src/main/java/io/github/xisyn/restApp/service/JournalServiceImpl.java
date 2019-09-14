@@ -3,9 +3,7 @@ package io.github.xisyn.restApp.service;
 import io.github.xisyn.restApp.controller.dto.JournalItemDTO;
 import io.github.xisyn.restApp.controller.dto.JournalRequestDTO;
 import io.github.xisyn.restApp.controller.dto.QuestionsItemDTO;
-import io.github.xisyn.restApp.data.AnswerRepository;
-import io.github.xisyn.restApp.data.JournalRepository;
-import io.github.xisyn.restApp.data.QuestionRepository;
+import io.github.xisyn.restApp.data.*;
 import io.github.xisyn.restApp.entity.BaseEntity;
 import io.github.xisyn.restApp.entity.Journal;
 import org.springframework.stereotype.Service;
@@ -20,28 +18,34 @@ import java.util.stream.Collectors;
 public class JournalServiceImpl implements JournalService {
 
     public static final String QUESTIONS_JOURNAL_ID = "questions";
+    public static final String SESSIONS_JOURNAL_ID = "sessions";
 
     private final JournalRepository journalRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final SessionRepository sessionRepository;
+    private final SelectedAnswerRepository selectedAnswerRepository;
 
     public JournalServiceImpl(JournalRepository journalRepository,
                               QuestionRepository questionRepository,
-                              AnswerRepository answerRepository) {
+                              AnswerRepository answerRepository,
+                              SessionRepository sessionRepository,
+                              SelectedAnswerRepository selectedAnswerRepository) {
         this.journalRepository = journalRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
+        this.sessionRepository = sessionRepository;
+        this.selectedAnswerRepository = selectedAnswerRepository;
     }
 
     @Override
     public Journal getJournal(String id) {
         return journalRepository.findById(id)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new RuntimeException(String.format("Нет журнала с таким id: %s", id)));
     }
 
     @Override
-    public List<? extends JournalItemDTO> getJournalRows(
-            String id, JournalRequestDTO req) {
+    public List<? extends JournalItemDTO> getJournalRows(String id, JournalRequestDTO req) {
         List<? extends JournalItemDTO> collection;
         switch (id) {
             case QUESTIONS_JOURNAL_ID:
@@ -52,6 +56,15 @@ public class JournalServiceImpl implements JournalService {
                                 q,
                                 answerRepository.findByQuestion(q)));
                 break;
+
+            /*case SESSIONS_JOURNAL_ID:
+                collection = getCollection(
+                        req.search,
+                        sessionRepository::findByFullNameContainingIgnoreCase,
+                        session -> new SessionItemDto(
+                                session,
+                                selectedAnswerRepository.findBySession(session)));
+                break;*/
 
             case "else":
                 collection = getCollection(
