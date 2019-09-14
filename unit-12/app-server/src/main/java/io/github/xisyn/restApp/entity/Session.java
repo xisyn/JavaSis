@@ -10,7 +10,7 @@ public class Session extends BaseEntity {
     private String fullName;
 
     @Column(name = "correct_answers_percent")
-    private Double correctAnswersPercent;
+    private Double correctQuestionsPercent;
 
     public String getFullName() {
         return fullName;
@@ -20,11 +20,11 @@ public class Session extends BaseEntity {
         this.fullName = fullName;
     }
 
-    public Double getCorrectAnswersPercent() {
-        return correctAnswersPercent;
+    public Double getCorrectQuestionsPercent() {
+        return correctQuestionsPercent;
     }
 
-    public void setCorrectAnswersPercent(Double correctAnswersPercent) {
-        this.correctAnswersPercent = correctAnswersPercent;
+    public void setCorrectQuestionsPercent(Double correctQuestionsPercent) {
+        this.correctQuestionsPercent = correctQuestionsPercent;
     }
 }

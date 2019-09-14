@@ -21,8 +21,9 @@ public class SessionRestController {
         this.questionService = questionService;
     }
 
+    //В ответ получаем строку - количество набранных процентов
     @PostMapping
-    public SessionItemDto create(@RequestBody SessionItemDto dto) {
+    public String create(@RequestBody SessionItemDto dto) {
         return sessionService.createSession(dto);
     }
 

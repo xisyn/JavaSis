@@ -6,11 +6,11 @@ import javax.persistence.*;
 public class SelectedAnswer extends BaseEntity {
 
     @JoinColumn(name = "answer_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private Answer answer;
 
     @JoinColumn(name = "session_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Session session;
 
     @Column(name = "is_selected")
