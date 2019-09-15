@@ -7,9 +7,7 @@ import io.github.xisyn.restApp.data.AnswerRepository;
 import io.github.xisyn.restApp.data.QuestionRepository;
 import io.github.xisyn.restApp.data.SelectedAnswerRepository;
 import io.github.xisyn.restApp.data.SessionRepository;
-import io.github.xisyn.restApp.entity.Question;
-import io.github.xisyn.restApp.entity.SelectedAnswer;
-import io.github.xisyn.restApp.entity.Session;
+import io.github.xisyn.restApp.entity.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,7 +48,7 @@ public class SessionServiceImpl implements SessionService {
         List<Question> questions = new ArrayList<>();
         questionRepository.findAll().forEach(questions::add);
 
-        double numberOfCorrectQuestions = getNumberOfCorrectQuestions(questions);
+        double numberOfCorrectQuestions = getNumberOfCorrectQuestions(questions, session);
         double numberOfQuestion = questionRepository.count();
 
         double correctQuestionsPercent = (numberOfCorrectQuestions / numberOfQuestion) * 100;
@@ -64,23 +62,26 @@ public class SessionServiceImpl implements SessionService {
         return formattedPercentage;
     }
 
-    private double getNumberOfCorrectQuestions(List<Question> questions) {
+    private double getNumberOfCorrectQuestions(List<Question> questions, Session session) {
         double numberOfCorrectQuestions = 0;
-        for (Question question : questions) {
-            List<SelectedAnswer> selectedAnswers = answerRepository.findByQuestion(question).
-                    stream().
-                    map(answer -> selectedAnswerRepository.findByAnswerId(answer.getId())).
-                    filter(SelectedAnswer::getSelected).
-                    collect(Collectors.toList());
 
-            List<SelectedAnswer> inCorrectAnswers = selectedAnswers.stream().
-                    filter(selectedAnswer -> answerRepository.findById(selectedAnswer.
-                            getAnswer().
-                            getId()).
-                            orElseThrow(() -> new RuntimeException(String.format("There is no answer with id: %s", String.valueOf(selectedAnswer.getAnswer().getId())))).
-                            getCorrect().
-                            equals(false)).
-                    collect(Collectors.toList());
+        List<SelectedAnswer> sessionSelectedAnswers = selectedAnswerRepository.findBySession(session);
+
+        for (Question question : questions) {
+            List<Answer> questionAnswers = answerRepository.findByQuestion(question);
+
+            List<Long> answerIds = questionAnswers.stream()
+                    .map(Answer::getId)
+                    .collect(Collectors.toList());
+
+            List<SelectedAnswer> questionSelectedAnswers = sessionSelectedAnswers.stream()
+                    .filter(selectedAnswer -> answerIds.contains(selectedAnswer.getAnswer().getId()))
+                    .filter(SelectedAnswer::getSelected)
+                    .collect(Collectors.toList());
+
+            List<SelectedAnswer> inCorrectAnswers = questionSelectedAnswers.stream().
+                    filter(selectedAnswer -> selectedAnswer.getAnswer().getCorrect().equals(false))
+                    .collect(Collectors.toList());
 
             if (inCorrectAnswers.size() == 0) {
                 numberOfCorrectQuestions++;

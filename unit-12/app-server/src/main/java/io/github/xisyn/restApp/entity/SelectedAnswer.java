@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class SelectedAnswer extends BaseEntity {
 
     @JoinColumn(name = "answer_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Answer answer;
 
     @JoinColumn(name = "session_id")
