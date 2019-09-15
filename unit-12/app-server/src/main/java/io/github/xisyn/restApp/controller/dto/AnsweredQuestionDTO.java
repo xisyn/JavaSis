@@ -14,4 +14,9 @@ public class AnsweredQuestionDTO {
         this.id = answeredQuestionDTO.id;
         this.answersList = answeredQuestionDTO.answersList;
     }
+
+    public AnsweredQuestionDTO(String id, List<SessionQuestionAnswerDTO> answersList) {
+        this.id = id;
+        this.answersList = answersList;
+    }
 }

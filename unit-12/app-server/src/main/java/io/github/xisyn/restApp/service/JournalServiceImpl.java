@@ -2,6 +2,7 @@ package io.github.xisyn.restApp.service;
 
 import io.github.xisyn.restApp.controller.dto.JournalItemDTO;
 import io.github.xisyn.restApp.controller.dto.JournalRequestDTO;
+import io.github.xisyn.restApp.controller.dto.JournalSessionDTO;
 import io.github.xisyn.restApp.controller.dto.QuestionsItemDTO;
 import io.github.xisyn.restApp.data.*;
 import io.github.xisyn.restApp.entity.BaseEntity;
@@ -24,7 +25,6 @@ public class JournalServiceImpl implements JournalService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final SessionRepository sessionRepository;
-    private final SelectedAnswerRepository selectedAnswerRepository;
 
     public JournalServiceImpl(JournalRepository journalRepository,
                               QuestionRepository questionRepository,
@@ -35,13 +35,12 @@ public class JournalServiceImpl implements JournalService {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.sessionRepository = sessionRepository;
-        this.selectedAnswerRepository = selectedAnswerRepository;
     }
 
     @Override
     public Journal getJournal(String id) {
         return journalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(String.format("Нет журнала с таким id: %s", id)));
+                .orElseThrow(() -> new RuntimeException(String.format("There is no journal with id: %s", id)));
     }
 
     @Override
@@ -57,23 +56,13 @@ public class JournalServiceImpl implements JournalService {
                                 answerRepository.findByQuestion(q)));
                 break;
 
-            /*case SESSIONS_JOURNAL_ID:
+            case SESSIONS_JOURNAL_ID:
                 collection = getCollection(
                         req.search,
                         sessionRepository::findByFullNameContainingIgnoreCase,
-                        session -> new SessionItemDto(
-                                session,
-                                selectedAnswerRepository.findBySession(session)));
-                break;*/
-
-            case "else":
-                collection = getCollection(
-                        req.search,
-                        questionRepository::findByNameContainingIgnoreCase,
-                        q -> new QuestionsItemDTO(
-                                q,
-                                answerRepository.findByQuestion(q)));
+                        JournalSessionDTO::new);
                 break;
+
             default:
                 throw new RuntimeException();
         }
@@ -85,10 +74,35 @@ public class JournalServiceImpl implements JournalService {
             String search,
             Function<String, List<T>> finder,
             Function<T, U> mapper
-            ) {
+    ) {
         return finder.apply(search)
                 .stream()
                 .map(mapper)
                 .collect(Collectors.toList());
     }
+
+    /*private List<AnsweredQuestionDTO> getAnsweredQuestionDTO(Session session) {
+        List<AnsweredQuestionDTO> answeredQuestionDTOS = new ArrayList<>();
+        List<SelectedAnswer> selectedAnswers = selectedAnswerRepository.findBySession(session);
+
+        List<Question> questions = selectedAnswers.stream().
+                map(selectedAnswer -> selectedAnswer.getAnswer().getQuestion().getId()).
+                distinct().
+                map(id -> questionRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException(String.format("There is no question with id: %s", id)))).
+                collect(Collectors.toList());
+
+        for (Question question : questions) {
+            List<SessionQuestionAnswerDTO> sessionQuestionAnswerDTOS = answerRepository.findByQuestion(question).
+                    stream().
+                    map(answer -> selectedAnswerRepository.findByAnswerId(answer.getId())).
+                    map(SessionQuestionAnswerDTO::new).
+                    collect(Collectors.toList());
+
+            AnsweredQuestionDTO dto = new AnsweredQuestionDTO(String.valueOf(question.getId()), sessionQuestionAnswerDTOS);
+            answeredQuestionDTOS.add(dto);
+        }
+
+        return answeredQuestionDTOS;
+    }*/
 }

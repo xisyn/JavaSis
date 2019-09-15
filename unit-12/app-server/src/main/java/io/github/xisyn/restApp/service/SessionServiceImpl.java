@@ -44,24 +44,28 @@ public class SessionServiceImpl implements SessionService {
         session.setFullName(dto.name);
 
         for (AnsweredQuestionDTO answeredQuestionDTO : dto.questionsList) {
-            for (SessionQuestionAnswerDTO sessionQuestionAnswerDTO : answeredQuestionDTO.answersList) {
-                SelectedAnswer answer = new SelectedAnswer();
-
-                answer.setSelected(sessionQuestionAnswerDTO.isSelected);
-                answer.setSession(session);
-                answer.setAnswer(answerRepository.findById(Long.valueOf(sessionQuestionAnswerDTO.id))
-                        .orElseThrow(() -> new RuntimeException(String.format("Нет ответа с таким id: %s", String.valueOf(sessionQuestionAnswerDTO.id)))));
-
-                selectedAnswerRepository.save(answer);
-            }
+            saveSelectedAnswers(session, answeredQuestionDTO);
         }
-
-        double numberOfQuestion = questionRepository.count();
-        double numberOfCorrectQuestions = 0;
 
         List<Question> questions = new ArrayList<>();
         questionRepository.findAll().forEach(questions::add);
 
+        double numberOfCorrectQuestions = getNumberOfCorrectQuestions(questions);
+        double numberOfQuestion = questionRepository.count();
+
+        double correctQuestionsPercent = (numberOfCorrectQuestions / numberOfQuestion) * 100;
+        session.setCorrectQuestionsPercent(correctQuestionsPercent);
+
+        session.setInsertDate(System.currentTimeMillis());
+
+        sessionRepository.save(session);
+
+        String formattedPercentage = new DecimalFormat("#0.##", new DecimalFormatSymbols(Locale.ENGLISH)).format(correctQuestionsPercent);
+        return formattedPercentage;
+    }
+
+    private double getNumberOfCorrectQuestions(List<Question> questions) {
+        double numberOfCorrectQuestions = 0;
         for (Question question : questions) {
             List<SelectedAnswer> selectedAnswers = answerRepository.findByQuestion(question).
                     stream().
@@ -73,7 +77,7 @@ public class SessionServiceImpl implements SessionService {
                     filter(selectedAnswer -> answerRepository.findById(selectedAnswer.
                             getAnswer().
                             getId()).
-                            orElseThrow(() -> new RuntimeException(String.format("Не найден ответ с таким id: %s", String.valueOf(selectedAnswer.getAnswer().getId())))).
+                            orElseThrow(() -> new RuntimeException(String.format("There is no answer with id: %s", String.valueOf(selectedAnswer.getAnswer().getId())))).
                             getCorrect().
                             equals(false)).
                     collect(Collectors.toList());
@@ -82,14 +86,19 @@ public class SessionServiceImpl implements SessionService {
                 numberOfCorrectQuestions++;
             }
         }
-
-        double correctQuestionsPercent = (numberOfCorrectQuestions / numberOfQuestion) * 100;
-
-        session.setCorrectQuestionsPercent(correctQuestionsPercent);
-        sessionRepository.save(session);
-        //В ответ получаем строку - количество набранных процентов
-        String formattedPercentage = new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH)).format(correctQuestionsPercent);
-        return formattedPercentage;
+        return numberOfCorrectQuestions;
     }
 
+    private void saveSelectedAnswers(Session session, AnsweredQuestionDTO answeredQuestionDTO) {
+        for (SessionQuestionAnswerDTO sessionQuestionAnswerDTO : answeredQuestionDTO.answersList) {
+            SelectedAnswer answer = new SelectedAnswer();
+
+            answer.setSelected(sessionQuestionAnswerDTO.isSelected);
+            answer.setSession(session);
+            answer.setAnswer(answerRepository.findById(Long.valueOf(sessionQuestionAnswerDTO.id))
+                    .orElseThrow(() -> new RuntimeException(String.format("There is no answer with id: %s", String.valueOf(sessionQuestionAnswerDTO.id)))));
+
+            selectedAnswerRepository.save(answer);
+        }
+    }
 }

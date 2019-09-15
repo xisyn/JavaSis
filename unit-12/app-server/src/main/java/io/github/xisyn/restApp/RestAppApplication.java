@@ -21,10 +21,16 @@ public class RestAppApplication {
 
 	@PostConstruct
 	private void initData() {
-		Journal journal = new Journal();
-		journal.setId(JournalServiceImpl.QUESTIONS_JOURNAL_ID);
-		journal.setName("Вопросы");
-		journal.setDefaultPageSize(15L);
-		journalRepository.save(journal);
+		Journal questionJournal = new Journal();
+		questionJournal.setId(JournalServiceImpl.QUESTIONS_JOURNAL_ID);
+		questionJournal.setName("Вопросы");
+		questionJournal.setDefaultPageSize(15L);
+		journalRepository.save(questionJournal);
+
+		Journal sessionJournal = new Journal();
+		sessionJournal.setId(JournalServiceImpl.SESSIONS_JOURNAL_ID);
+		sessionJournal.setName("Сессии");
+		sessionJournal.setDefaultPageSize(15L);
+		journalRepository.save(sessionJournal);
 	}
 }

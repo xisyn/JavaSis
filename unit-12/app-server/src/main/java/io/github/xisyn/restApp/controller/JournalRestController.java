@@ -26,11 +26,8 @@ public class JournalRestController {
     }
 
     @PutMapping("{id}/rows")
-    public JournalResultDTO getRows(@PathVariable String id,
-                                    @RequestBody JournalRequestDTO req) {
-        List<? extends JournalItemDTO> collect =
-                journalService.getJournalRows(id, req);
-
+    public JournalResultDTO getRows(@PathVariable String id, @RequestBody JournalRequestDTO req) {
+        List<? extends JournalItemDTO> collect = journalService.getJournalRows(id, req);
         return new JournalResultDTO(collect.size(), collect);
     }
 }

@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface SelectedAnswerRepository extends CrudRepository<SelectedAnswer, Long> {
     List<SelectedAnswer> findBySession(Session session);
-
     SelectedAnswer findByAnswerId(Long id);
 }

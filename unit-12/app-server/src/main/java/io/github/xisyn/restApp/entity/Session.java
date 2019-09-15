@@ -12,6 +12,8 @@ public class Session extends BaseEntity {
     @Column(name = "correct_answers_percent")
     private Double correctQuestionsPercent;
 
+    private Long insertDate;
+
     public String getFullName() {
         return fullName;
     }
@@ -26,5 +28,13 @@ public class Session extends BaseEntity {
 
     public void setCorrectQuestionsPercent(Double correctQuestionsPercent) {
         this.correctQuestionsPercent = correctQuestionsPercent;
+    }
+
+    public Long getInsertDate() {
+        return insertDate;
+    }
+
+    public void setInsertDate(Long insertDate) {
+        this.insertDate = insertDate;
     }
 }
