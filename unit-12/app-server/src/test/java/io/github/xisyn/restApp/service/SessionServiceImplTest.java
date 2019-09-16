@@ -2,8 +2,6 @@ package io.github.xisyn.restApp.service;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class SessionServiceImplTest {
 
     /*
@@ -13,8 +11,10 @@ public class SessionServiceImplTest {
     *   - правильных ответов нечетное количество (1/3)
     * */
 
+
     @Test
     public void createSession() {
+
     }
 
     @Test
