@@ -2,6 +2,7 @@ package io.github.xisyn.restApp.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.time.LocalDateTime;
 
 @Entity
 public class Session extends BaseEntity {
@@ -12,7 +13,8 @@ public class Session extends BaseEntity {
     @Column(name = "correct_answers_percent")
     private Double correctQuestionsPercent;
 
-    private Long insertDate;
+    @Column(name = "insert_date")
+    private LocalDateTime insertDate;
 
     public String getFullName() {
         return fullName;
@@ -30,11 +32,11 @@ public class Session extends BaseEntity {
         this.correctQuestionsPercent = correctQuestionsPercent;
     }
 
-    public Long getInsertDate() {
+    public LocalDateTime getInsertDate() {
         return insertDate;
     }
 
-    public void setInsertDate(Long insertDate) {
+    public void setInsertDate(LocalDateTime insertDate) {
         this.insertDate = insertDate;
     }
 }

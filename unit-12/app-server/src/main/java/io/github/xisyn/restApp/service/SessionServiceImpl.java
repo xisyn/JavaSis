@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +55,7 @@ public class SessionServiceImpl implements SessionService {
         double correctQuestionsPercent = (numberOfCorrectQuestions / numberOfQuestion) * 100;
         session.setCorrectQuestionsPercent(correctQuestionsPercent);
 
-        session.setInsertDate(System.currentTimeMillis());
+        session.setInsertDate(LocalDateTime.now());
 
         sessionRepository.save(session);
 

@@ -80,29 +80,4 @@ public class JournalServiceImpl implements JournalService {
                 .map(mapper)
                 .collect(Collectors.toList());
     }
-
-    /*private List<AnsweredQuestionDTO> getAnsweredQuestionDTO(Session session) {
-        List<AnsweredQuestionDTO> answeredQuestionDTOS = new ArrayList<>();
-        List<SelectedAnswer> selectedAnswers = selectedAnswerRepository.findBySession(session);
-
-        List<Question> questions = selectedAnswers.stream().
-                map(selectedAnswer -> selectedAnswer.getAnswer().getQuestion().getId()).
-                distinct().
-                map(id -> questionRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException(String.format("There is no question with id: %s", id)))).
-                collect(Collectors.toList());
-
-        for (Question question : questions) {
-            List<SessionQuestionAnswerDTO> sessionQuestionAnswerDTOS = answerRepository.findByQuestion(question).
-                    stream().
-                    map(answer -> selectedAnswerRepository.findByAnswerId(answer.getId())).
-                    map(SessionQuestionAnswerDTO::new).
-                    collect(Collectors.toList());
-
-            AnsweredQuestionDTO dto = new AnsweredQuestionDTO(String.valueOf(question.getId()), sessionQuestionAnswerDTOS);
-            answeredQuestionDTOS.add(dto);
-        }
-
-        return answeredQuestionDTOS;
-    }*/
 }
