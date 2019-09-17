@@ -84,7 +84,7 @@ public class SessionServiceImpl implements SessionService {
                     filter(selectedAnswer -> selectedAnswer.getAnswer().getCorrect().equals(false))
                     .collect(Collectors.toList());
 
-            if (inCorrectAnswers.size() == 0) {
+            if (questionSelectedAnswers.size() != 0 & inCorrectAnswers.size() == 0) {
                 numberOfCorrectQuestions++;
             }
         }
